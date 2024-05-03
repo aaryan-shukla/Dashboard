@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous" />
+    <title>Driver Contact</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+      }
+
+      header {
+        background-color: #333;
+        color: #fff;
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="./index.html">
+        <img
+          src="./bin buddy.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt="" />
+        TEAM BIN BUDDY
+      </a>
+    </nav>
+    <header>
+      <h1>Driver Contact List</h1>
+    </header>
+    <div class="container">
+      <table id="excel-table">
+        <tbody></tbody>
+      </table>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.querySelector("#excel-table tbody");
+        const excelFilePath = "driverContact.xlsx";
+        fetch(excelFilePath)
+          .then((response) => response.arrayBuffer())
+          .then((buffer) => {
+            const data = new Uint8Array(buffer);
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheet_name = workbook.SheetNames[0];
+            const excelData = XLSX.utils.sheet_to_json(
+              workbook.Sheets[sheet_name],
+              { header: 1 }
+            );
+
+            tableBody.innerHTML = "";
+            excelData.forEach((rowData) => {
+              const row = document.createElement("tr");
+              rowData.forEach((cellData) => {
+                const cell = document.createElement("td");
+                cell.textContent = cellData;
+                row.appendChild(cell);
+              });
+              tableBody.appendChild(row);
+            });
+          })
+          .catch((error) => console.error("Error fetching Excel file:", error));
+      });
+    </script>
+  </body>
+</html>
